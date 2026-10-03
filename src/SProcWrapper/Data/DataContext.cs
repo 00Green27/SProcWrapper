@@ -27,6 +27,7 @@ namespace SProcWrapper.Data
 
         public void Dispose()
         {
+            _transaction?.Rollback();
             _transaction?.Dispose();
             _transaction = null;
             CloseConnection();
@@ -63,7 +64,7 @@ namespace SProcWrapper.Data
                         _connection.Open();
                         break;
                     default:
-                        throw new ArgumentOutOfRangeException();
+                        throw new ArgumentOutOfRangeException(nameof(_connection.State), _connection.State, "Unexpected connection state");
                 }
             }
             _connectionDepth++;
@@ -172,13 +173,13 @@ namespace SProcWrapper.Data
 
         public string ConnectionString { get; }
 
-        public Task<IEnumerable<T>> QueryAsync<T>(string sql, dynamic param = null, int? commandTimeout = null,
+        public async Task<IEnumerable<T>> QueryAsync<T>(string sql, dynamic param = null, int? commandTimeout = null,
             CommandType? commandType = null)
         {
             OpenConnection();
             try
             {
-                return SqlMapper.QueryAsync<T>(_connection, sql, param, _transaction, commandTimeout ?? CommandTimeout,
+                return await SqlMapper.QueryAsync<T>(_connection, sql, param, _transaction, commandTimeout ?? CommandTimeout,
                     commandType);
             }
             catch (Exception ex)
@@ -214,20 +215,19 @@ namespace SProcWrapper.Data
             }
         }
 
-        public Task ExecuteAsync(string sql, dynamic param = null, int? commandTimeout = null,
+        public async Task ExecuteAsync(string sql, dynamic param = null, int? commandTimeout = null,
             CommandType? commandType = null)
         {
             OpenConnection();
             try
             {
-                return SqlMapper.ExecuteAsync(_connection, sql, param, _transaction, commandTimeout ?? CommandTimeout,
+                await SqlMapper.ExecuteAsync(_connection, sql, param, _transaction, commandTimeout ?? CommandTimeout,
                     commandType);
             }
             catch (Exception e)
             {
                 if (OnException(e))
                     throw;
-                return null;
             }
             finally
             {
@@ -290,20 +290,20 @@ namespace SProcWrapper.Data
             }
         }
 
-        public Task<T> ExecuteScalarAsync<T>(string sql, dynamic param = null, int? commandTimeout = null,
+        public async Task<T> ExecuteScalarAsync<T>(string sql, dynamic param = null, int? commandTimeout = null,
             CommandType? commandType = null)
         {
             OpenConnection();
             try
             {
-                return SqlMapper.ExecuteScalarAsync<T>(_connection, sql, param, _transaction,
+                return await SqlMapper.ExecuteScalarAsync<T>(_connection, sql, param, _transaction,
                     commandTimeout ?? CommandTimeout, commandType);
             }
             catch (Exception e)
             {
                 if (OnException(e))
                     throw;
-                return null;
+                return default(T); // Returning default instead of null since T might be a value type
             }
             finally
             {
