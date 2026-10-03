@@ -23,12 +23,26 @@ public interface IUserService
 }
 ```
 
-Implement the service by inheriting from `AbstractSProcService`:
+You have two options for using the defined interface:
+
+**Option 1: Direct Proxy Generation (Runtime)**
+
+You can dynamically create an implementation of your interface at runtime using `SProcProxy.Build<T>`:
 
 ```csharp
-public class UserService : AbstractSProcService<IUserService>
+// Dynamically generate the proxy implementation
+IUserService userService = SProcProxy.Build<IUserService>(dataContext);
+var users = userService.GetUsers(123);
+```
+
+**Option 2: Inherit from `AbstractSProcService`**
+
+If you prefer a concrete class (e.g., for dependency injection or to add custom business logic), you can inherit from `AbstractSProcService`:
+
+```csharp
+public class UserService : AbstractSProcService<IUserService>, IUserService
 {
-    // The base class automatically generates the proxy using the provided IDataContext
+    // The base class automatically generates the proxy and makes it available via the `Sproc` property
     public UserService(IDataContext context) : base(context) { }
 
     public IEnumerable<UserDto> GetUsers(int id) => Sproc.GetUsers(id);
