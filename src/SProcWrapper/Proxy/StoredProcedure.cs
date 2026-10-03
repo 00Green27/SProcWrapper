@@ -60,7 +60,7 @@ namespace SProcWrapper.Proxy
                         var columnNames = returnType.GetGenericArguments()[0].GetProperties().Where(x => x.CanWrite)
                             .Select(x =>
                             {
-                                var columnName = ((ColumnAttribute) x.GetCustomAttribute(columnType))?.Name ?? x.Name;
+                                var columnName = ((ColumnAttribute)x.GetCustomAttribute(columnType))?.Name ?? x.Name;
 
                                 if (x.IsDefined(moneyType))
                                     columnName = $"{columnName}/100.00 as {columnName}";
@@ -86,8 +86,8 @@ namespace SProcWrapper.Proxy
             {
                 _returnTypeAsOutput = true;
                 _executorType = ExecutorTypeEnum.SingleRowSimpleType;
-                _outputProperties = _returnType == typeof(void) 
-                    ? new PropertyInfo[0] 
+                _outputProperties = _returnType == typeof(void)
+                    ? new PropertyInfo[0]
                     : _returnType.GetProperties().Where(x => x.CanWrite).ToArray();
             }
         }

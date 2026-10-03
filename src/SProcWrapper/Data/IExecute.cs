@@ -11,7 +11,7 @@ namespace SProcWrapper.Data
         T ExecuteScalar<T>(string sql, dynamic param = null, int? commandTimeout = null, CommandType? commandType = null);
         object ExecuteScalar(Type returnType, string sql, dynamic param = null, int? commandTimeout = null,
             CommandType? commandType = null);
-        
+
         Task<T> ExecuteScalarAsync<T>(string sql, dynamic param = null, int? commandTimeout = null,
             CommandType? commandType = null);
     }

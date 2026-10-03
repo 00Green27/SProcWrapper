@@ -77,7 +77,7 @@ namespace SProcWrapper.Data
                 _connectionDepth--;
                 if (_connectionDepth == 0)
                 {
-//                    OnConnectionClosing(_connection);
+                    //                    OnConnectionClosing(_connection);
                     _connection.Dispose();
                     _connection = null;
                 }
@@ -96,35 +96,35 @@ namespace SProcWrapper.Data
             switch (type)
             {
                 case TransactionType.ReadOnly:
-                {
-                    switch (_connection)
                     {
-                        case FbConnection fbConnection:
+                        switch (_connection)
                         {
-                            _transaction = fbConnection.BeginTransaction(new FbTransactionOptions
-                            {
-                                WaitTimeout = new TimeSpan?(),
-                                TransactionBehavior = FbTransactionBehavior.Read |
-                                                      FbTransactionBehavior.NoWait |
-                                                      FbTransactionBehavior.ReadCommitted |
-                                                      FbTransactionBehavior.RecVersion
-                            });
-                            break;
+                            case FbConnection fbConnection:
+                                {
+                                    _transaction = fbConnection.BeginTransaction(new FbTransactionOptions
+                                    {
+                                        WaitTimeout = new TimeSpan?(),
+                                        TransactionBehavior = FbTransactionBehavior.Read |
+                                                              FbTransactionBehavior.NoWait |
+                                                              FbTransactionBehavior.ReadCommitted |
+                                                              FbTransactionBehavior.RecVersion
+                                    });
+                                    break;
+                                }
+                            default:
+                                throw new ArgumentOutOfRangeException(nameof(_connection));
                         }
-                        default:
-                            throw new ArgumentOutOfRangeException(nameof(_connection));
+                        break;
                     }
-                    break;
-                }
                 case TransactionType.Write:
-                {
-                    _transaction = _connection.BeginTransaction();
-                    break;
-                }
+                    {
+                        _transaction = _connection.BeginTransaction();
+                        break;
+                    }
                 default:
-                {
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
-                }
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(type), type, null);
+                    }
             }
         }
 
@@ -334,7 +334,7 @@ namespace SProcWrapper.Data
                     .Single(m => m.Name == nameof(IDataContext.Query) && m.IsGenericMethod && m.GetParameters().Length == 5)
                     .MakeGenericMethod(t));
 
-                return method.Invoke(this, new object[] {sql, param, buffered, commandTimeout, commandType});
+                return method.Invoke(this, new object[] { sql, param, buffered, commandTimeout, commandType });
             }
             catch (TargetInvocationException e)
             {

@@ -29,7 +29,8 @@ namespace SProcWrapper.Data
             var strings = pathForReplica.ThrowIfNullOrWhiteSpace().Split(':');
             return new DatabaseOptions(strings[0], strings[1],
                 Credential.UserName, Credential.Password,
-                DbName + "_replica") {SessionId = SessionId};
+                DbName + "_replica")
+            { SessionId = SessionId };
         }
 
         /// <summary>

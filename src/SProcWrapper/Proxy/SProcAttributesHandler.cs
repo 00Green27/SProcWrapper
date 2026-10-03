@@ -23,7 +23,7 @@ namespace SProcWrapper.Proxy
             var attributeType = typeof(SProcCallAttribute);
             return type.GetMethods()
                 .Select(m =>
-                    (methodInfo: m, attribute: (SProcCallAttribute) m.GetCustomAttribute(attributeType, false)))
+                    (methodInfo: m, attribute: (SProcCallAttribute)m.GetCustomAttribute(attributeType, false)))
                 .Where(tuple => tuple.attribute != null);
         }
 
@@ -37,12 +37,12 @@ namespace SProcWrapper.Proxy
                 method =>
                 {
                     var storedProcedureParameters = method.methodInfo.GetParameters()
-                        .Select(x => (param: x, attribute: (SProcParamAttribute) x.GetCustomAttribute(attributeType)))
-                        .Select(parameter => 
+                        .Select(x => (param: x, attribute: (SProcParamAttribute)x.GetCustomAttribute(attributeType)))
+                        .Select(parameter =>
                         {
                             if (parameter.attribute == null)
                                 throw new InvalidOperationException($"Parameter '{parameter.param.Name}' on method '{method.methodInfo.Name}' is missing [SProcParam] attribute.");
-                            
+
                             return new StoredProcedureParameter(
                                 string.IsNullOrWhiteSpace(parameter.attribute.Name) ? parameter.param.Name : parameter.attribute.Name,
                                 parameter.param.ParameterType,

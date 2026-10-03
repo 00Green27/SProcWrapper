@@ -18,7 +18,7 @@ namespace SProcWrapper.Proxy
         {
             var spDictionary = SProcAttributesHandler.Handle(typeof(T));
             var proxy = new SProcProxy(context, spDictionary);
-            return (T) ProxyGenerator.CreateInterfaceProxyWithoutTarget(typeof(T), proxy);
+            return (T)ProxyGenerator.CreateInterfaceProxyWithoutTarget(typeof(T), proxy);
         }
 
         private SProcProxy(IDataContext context, IReadOnlyDictionary<MethodInfo, StoredProcedure> spDictionary)
