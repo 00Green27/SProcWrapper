@@ -37,7 +37,6 @@ namespace SProcWrapper.Data
         {
             ConnectionString = connectionString.ThrowIfNullOrWhiteSpace(paramName: nameof(connectionString));
             _factory = factory.ThrowIfNull(paramName: nameof(factory));
-            //KeepConnectionAlive = true;
         }
 
         public DataContext(IConnectionOptions builder) : this(builder.ToInsecureConnectionString(),
@@ -77,7 +76,6 @@ namespace SProcWrapper.Data
                 _connectionDepth--;
                 if (_connectionDepth == 0)
                 {
-                    //                    OnConnectionClosing(_connection);
                     _connection.Dispose();
                     _connection = null;
                 }

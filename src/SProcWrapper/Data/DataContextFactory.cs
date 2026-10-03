@@ -1,12 +1,13 @@
-﻿using System;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace SProcWrapper.Data
 {
     public static class DataContextFactory
     {
-        private static readonly Dictionary<DbTypeEnum, IConnectionOptions> DataBases =
-            new Dictionary<DbTypeEnum, IConnectionOptions>();
+        private static readonly ConcurrentDictionary<DbTypeEnum, IConnectionOptions> DataBases =
+            new ConcurrentDictionary<DbTypeEnum, IConnectionOptions>();
 
         /// <summary>
         /// Регистрация различных БД
@@ -15,7 +16,7 @@ namespace SProcWrapper.Data
         /// <param name="connectionOptions">Строка подключения</param>
         public static void RegisterConnectionOptions(DbTypeEnum dbType, IConnectionOptions connectionOptions)
         {
-            DataBases.Add(dbType, connectionOptions);
+            DataBases.TryAdd(dbType, connectionOptions);
         }
 
         /// <summary>

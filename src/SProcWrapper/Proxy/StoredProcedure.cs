@@ -12,7 +12,6 @@ namespace SProcWrapper.Proxy
 {
     public class StoredProcedure
     {
-        private string _query;
         private readonly Type _returnType;
         private readonly int _timeout;
         private readonly bool _buffered;
@@ -90,9 +89,16 @@ namespace SProcWrapper.Proxy
                     ? new PropertyInfo[0]
                     : _returnType.GetProperties().Where(x => x.CanWrite).ToArray();
             }
+
+            if (Query == null)
+            {
+                string command = _selectable ? "SELECT * FROM " : "EXECUTE PROCEDURE ";
+                Query = command + Name + " ( " + GetSqlParameterList() + " )";
+            }
         }
 
         public string Name { get; }
+        public string Query { get; }
 
         public object Execute(IDataContext dataContext, object[] argumentsParameters)
         {
@@ -166,18 +172,6 @@ namespace SProcWrapper.Proxy
             return s + string.Join(",", _parameters.Select(x => $"@{x.Name}"));
         }
 
-        public string Query
-        {
-            get
-            {
-                if (_query == null)
-                {
-                    string command = _selectable ? "SELECT * FROM " : "EXECUTE PROCEDURE ";
-                    _query = command + Name + " ( " + GetSqlParameterList() + " )";
-                }
-                return _query;
-            }
-            private set { _query = value; }
-        }
+
     }
 }
