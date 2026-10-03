@@ -1,9 +1,8 @@
-﻿################################################################################
+################################################################################
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
 /.vs
-/src/SProcWrapper/bin
-/src/SProcWrapper/obj
-/src/SProcWrapper.Tests/bin
-/src/SProcWrapper.Tests/obj
+[Bb]in/
+[Oo]bj/
+

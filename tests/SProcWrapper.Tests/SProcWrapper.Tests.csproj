@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SProcWrapper\SProcWrapper.csproj" />
+    <ProjectReference Include="..\..\src\SProcWrapper\SProcWrapper.csproj" />
   </ItemGroup>
 
 </Project>

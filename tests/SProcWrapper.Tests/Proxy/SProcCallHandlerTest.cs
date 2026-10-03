@@ -4,7 +4,7 @@ using NUnit.Framework;
 using SProcWrapper;
 using SProcWrapper.Proxy;
 
-namespace Psbst.Tests.SProcWrapper.Proxy
+namespace SProcWrapper.Tests.Proxy
 {
     [TestFixture]
     public class SProcCallHandlerTest
@@ -105,3 +105,4 @@ namespace Psbst.Tests.SProcWrapper.Proxy
         }
     }
 }
+

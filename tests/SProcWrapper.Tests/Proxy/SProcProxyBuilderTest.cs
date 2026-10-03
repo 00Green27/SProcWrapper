@@ -1,9 +1,9 @@
-﻿using Moq;
+using Moq;
 using NUnit.Framework;
 using SProcWrapper.Data;
 using SProcWrapper.Proxy;
 
-namespace Psbst.Tests.SProcWrapper.Proxy
+namespace SProcWrapper.Tests.Proxy
 {
     public class SProcProxyBuilderTest
     {

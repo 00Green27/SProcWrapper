@@ -1,11 +1,11 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.168
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SProcWrapper", "src\SProcWrapper\SProcWrapper.csproj", "{930AD3A6-34B3-42DE-8CAD-8CBF633EC760}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SProcWrapper.Tests", "src\SProcWrapper.Tests\SProcWrapper.Tests.csproj", "{98B1AAB7-2179-4ADA-9BB9-82107ED777D2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SProcWrapper.Tests", "tests\SProcWrapper.Tests\SProcWrapper.Tests.csproj", "{98B1AAB7-2179-4ADA-9BB9-82107ED777D2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,3 +29,4 @@ Global
 		SolutionGuid = {FD4FF152-489A-497A-A114-7A8AA4D73AB5}
 	EndGlobalSection
 EndGlobal
+
