@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -38,14 +38,19 @@ namespace SProcWrapper.Proxy
                 {
                     var storedProcedureParameters = method.methodInfo.GetParameters()
                         .Select(x => (param: x, attribute: (SProcParamAttribute) x.GetCustomAttribute(attributeType)))
-                        .Where(tuple => tuple.attribute != null)
-                        .Select(parameter => new StoredProcedureParameter(
-                            parameter.param.Name,
-                            parameter.param.ParameterType,
-                            parameter.attribute.TableType,
-                            parameter.attribute.DbType,
-                            parameter.param.Position,
-                            parameter.attribute.Sensitive))
+                        .Select(parameter => 
+                        {
+                            if (parameter.attribute == null)
+                                throw new InvalidOperationException($"Parameter '{parameter.param.Name}' on method '{method.methodInfo.Name}' is missing [SProcParam] attribute.");
+                            
+                            return new StoredProcedureParameter(
+                                string.IsNullOrWhiteSpace(parameter.attribute.Name) ? parameter.param.Name : parameter.attribute.Name,
+                                parameter.param.ParameterType,
+                                parameter.attribute.TableType,
+                                parameter.attribute.DbType,
+                                parameter.param.Position,
+                                parameter.attribute.Sensitive);
+                        })
                         .ToList();
 
                     return new StoredProcedure(prefix + method.attribute.Name, method.methodInfo.ReturnType,

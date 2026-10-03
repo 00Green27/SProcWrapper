@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using NUnit.Framework;
 using SProcWrapper;
@@ -75,7 +75,7 @@ namespace Psbst.Tests.SProcWrapper.Proxy
             var storedProcedure = handle[annotatedMethods.First().methodInfo];
 
             var sqlParameterList = storedProcedure.GetSqlParameterList();
-            Assert.AreEqual(sqlParameterList, "@dummyParam");
+            Assert.AreEqual(sqlParameterList, "@var");
         }
 
         [Test]
