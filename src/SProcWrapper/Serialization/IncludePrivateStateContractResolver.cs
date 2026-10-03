@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -12,7 +12,7 @@ namespace SProcWrapper.Serialization
         protected override List<MemberInfo> GetSerializableMembers(Type objectType)
         {
             const BindingFlags BindingFlags = BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public;
-            var properties = objectType.GetProperties(BindingFlags);//.Where(p => p.HasSetter() && p.HasGetter());
+            var properties = objectType.GetProperties(BindingFlags);
             var fields = objectType.GetFields(BindingFlags);
 
             var allMembers = properties.Cast<MemberInfo>().Union(fields);
