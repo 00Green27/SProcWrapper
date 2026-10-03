@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
@@ -27,6 +27,8 @@ namespace SProcWrapper.Data
 
         public void Dispose()
         {
+            _transaction?.Dispose();
+            _transaction = null;
             CloseConnection();
         }
 
@@ -46,7 +48,6 @@ namespace SProcWrapper.Data
 
         #region Connection 
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public void OpenConnection()
         {
             if (_connectionDepth == 0)
@@ -69,7 +70,6 @@ namespace SProcWrapper.Data
             _connectionDepth++;
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public void CloseConnection()
         {
             if (_connectionDepth > 0)
@@ -258,6 +258,8 @@ namespace SProcWrapper.Data
             }
         }
 
+        private static readonly System.Collections.Concurrent.ConcurrentDictionary<Type, MethodInfo> ExecuteScalarMethods = new System.Collections.Concurrent.ConcurrentDictionary<Type, MethodInfo>();
+
         /// <summary>
         /// Метод получения из БД типизированного поля через рефлексию
         /// </summary>
@@ -274,10 +276,9 @@ namespace SProcWrapper.Data
             //return SqlMapper.ExecuteScalar(_connection, sql, param, _transaction, commandTimeout ?? CommandTimeout, commandType);
             try
             {
-                var method = 
-                    GetType().GetMethods()
-                        .Single(m => m.Name == nameof(IDataContext.ExecuteScalar) && m.IsGenericMethod && m.GetParameters().Length == 4)
-                        .MakeGenericMethod(returnType);
+                var method = ExecuteScalarMethods.GetOrAdd(returnType, t => GetType().GetMethods()
+                    .Single(m => m.Name == nameof(IDataContext.ExecuteScalar) && m.IsGenericMethod && m.GetParameters().Length == 4)
+                    .MakeGenericMethod(t));
 
                 return method.Invoke(this, new object[] { sql, param, commandTimeout, commandType });
             }
@@ -312,6 +313,8 @@ namespace SProcWrapper.Data
             }
         }
 
+        private static readonly System.Collections.Concurrent.ConcurrentDictionary<Type, MethodInfo> QueryMethods = new System.Collections.Concurrent.ConcurrentDictionary<Type, MethodInfo>();
+
         /// <summary>
         /// Метод получения из БД типизированного IEnumerable через рефлексию
         /// </summary>
@@ -327,12 +330,11 @@ namespace SProcWrapper.Data
         {
             try
             {
-                var method =
-                    GetType().GetMethods()
-                        .Single(m => m.Name == nameof(IDataContext.Query) && m.IsGenericMethod && m.GetParameters().Length == 5);
+                var method = QueryMethods.GetOrAdd(returnType, t => GetType().GetMethods()
+                    .Single(m => m.Name == nameof(IDataContext.Query) && m.IsGenericMethod && m.GetParameters().Length == 5)
+                    .MakeGenericMethod(t));
 
-                return method.MakeGenericMethod(returnType)
-                    .Invoke(this, new object[] {sql, param, buffered, commandTimeout, commandType});
+                return method.Invoke(this, new object[] {sql, param, buffered, commandTimeout, commandType});
             }
             catch (TargetInvocationException e)
             {
