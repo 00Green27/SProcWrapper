@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
@@ -19,6 +19,7 @@ namespace SProcWrapper.Proxy
         private readonly bool _withSessionId;
         private readonly bool _selectable;
         private readonly bool _returnTypeAsOutput;
+        private readonly PropertyInfo[] _outputProperties;
         private readonly IList<StoredProcedureParameter> _parameters;
 
         private readonly ExecutorTypeEnum _executorType;
@@ -85,6 +86,9 @@ namespace SProcWrapper.Proxy
             {
                 _returnTypeAsOutput = true;
                 _executorType = ExecutorTypeEnum.SingleRowSimpleType;
+                _outputProperties = _returnType == typeof(void) 
+                    ? new PropertyInfo[0] 
+                    : _returnType.GetProperties().Where(x => x.CanWrite).ToArray();
             }
         }
 
@@ -114,10 +118,10 @@ namespace SProcWrapper.Proxy
                     //todo: Данную конструкцию необходимо заменить на использование селективных ХП
                     var result = Activator.CreateInstance(_returnType);
 
-                    foreach (var pi in _returnType.GetProperties().Where(x => x.CanWrite))
+                    foreach (var pi in _outputProperties)
                     {
-                        var name = parameters.ParameterNames.Single(x => x == pi.Name);
-                        pi.SetValue(result, parameters.Get<object>(name), null);
+                        var value = parameters.Get<object>(pi.Name);
+                        pi.SetValue(result, value, null);
                     }
 
                     return result;
@@ -139,7 +143,7 @@ namespace SProcWrapper.Proxy
             }
             if (_returnTypeAsOutput)
             {
-                foreach (var p in _returnType.GetProperties().Where(x => x.CanWrite))
+                foreach (var p in _outputProperties)
                 {
                     result.Add(p.Name, direction: ParameterDirection.Output);
                 }
